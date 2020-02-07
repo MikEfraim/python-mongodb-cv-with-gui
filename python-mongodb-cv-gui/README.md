@@ -1,8 +1,8 @@
 # Python-MongoDB-CV-Application-With-Gui
-A working example Application for storing data using Python, Qt, PyMongo (more to add fix later)
 
 # What is this application ?
-This is a python application to load mongodb database with CV's
+This is an testing python application for storing user's CV in a list using PyQt5 graphics and storing user's info
+in a mongo database
 
 # Requirements
 * Python3.6.9
@@ -11,13 +11,17 @@ This is a python application to load mongodb database with CV's
 * pymongo 3.10.1
 * MongoDB 4.0.4 - Database Server
 * (Optional)MongoDB Compass - To view database
-* (add more later)
+* (might add more later)
 
 
 # What does this application do so far:
 1. Connects to a local host mongodb server (found on /Mongo/__init__.py)
-2. Uses gui to load CV images ( /gui/cotroller.ui.py)
+2. Uses gui to insert/delete CV images ( /gui/cotroller.ui.py)
 
 # Todo list:
-* Make gui view/delete buttons working
-* Insert documents with image_id's in database
+* Make gui view button working 
+* make images have an ID, save the image on a folder.
+* When an insert action is successful, make a white qlabel go instantly green and then progressively white again
+with text indicating a successful insertion
+* Finally, connect the profiles to the database with working inserts/deletes
+* Make loading profiles work

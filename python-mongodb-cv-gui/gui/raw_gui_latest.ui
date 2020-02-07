@@ -53,7 +53,7 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="CVImage">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>210</x>
       <y>10</y>
       <width>131</width>
       <height>151</height>
