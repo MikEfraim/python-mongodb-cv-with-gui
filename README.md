@@ -15,7 +15,7 @@ in a mongo database
 
 
 # What does this application do so far:
-1. Uses gui to insert/delete CV images ( /gui/cotroller.ui.py)
+1. Uses gui to insert/delete user's CV with name,description and image ( /gui/cotroller.ui.py)
 2. Connects to a localhost mongo database (not implemented yet) ( /Mongo/main_mongo.py)
 
 # Todo list:
@@ -23,4 +23,4 @@ in a mongo database
 * When an insert action is successful, make a white qlabel go instantly green and then progressively white again
 with text indicating a successful insertion
 * Finally, connect the profiles to the database with working inserts/deletes
-* Make loading profiles work
+* On open app, load profiles
