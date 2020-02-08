@@ -15,11 +15,10 @@ in a mongo database
 
 
 # What does this application do so far:
-1. Connects to a local host mongodb server (found on /Mongo/main_mongo.py)
-2. Uses gui to insert/delete CV images ( /gui/cotroller.ui.py)
+1. Uses gui to insert/delete CV images ( /gui/cotroller.ui.py)
+2. Connects to a localhost mongo database (not implemented yet) ( /Mongo/main_mongo.py)
 
 # Todo list:
-* Make gui view button working 
 * make images have an ID, save the image on a folder.
 * When an insert action is successful, make a white qlabel go instantly green and then progressively white again
 with text indicating a successful insertion
