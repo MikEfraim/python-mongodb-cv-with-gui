@@ -10,13 +10,13 @@ import copy
 
 
 print("PyQt version:", Qt.PYQT_VERSION_STR)
-cwd = os.getcwd()
-print('working directory:', cwd)
-guiFolder = Path(__file__).resolve().parent.parent
-print('guiFolder is:', guiFolder)
-uiFileName = '/home/mike/Downloads/python-testing/python-mongodb-cv-gui' + \
-    '/gui/raw_gui_latest.ui'
-print('uiFileName= ', uiFileName)
+# cwd = os.getcwd()
+# print('working directory:', cwd)
+guiFolder = Path(__file__).resolve().parent
+# print('guiFolder is:', guiFolder)
+uiFilePath = guiFolder.__str__() + \
+    '/raw_gui_latest.ui'
+print('uiFilePath= ', uiFilePath)
 
 
 class Ui(QtWidgets.QMainWindow):
@@ -25,7 +25,7 @@ class Ui(QtWidgets.QMainWindow):
         super(Ui, self).__init__()
         # print('\npath of parent folder:\n ',Path(__file__).resolve().parent)
 
-        uic.loadUi(uiFileName, self)
+        uic.loadUi(uiFilePath, self)
         # initialize some variables so the autocomplete recognizes them
 
         self.ButtonAddUser: QtWidgets.QPushButton
@@ -70,18 +70,14 @@ class Ui(QtWidgets.QMainWindow):
             print('no description set')
             return 0
 
-        # user_image_pixmap=self.CVImage.pixmap()
-        # print('local filename ',self.fileNameLastImageUsed)
-        # user_description=self.CVDescription.toPlainText()
-        # user_name=self.CVUserName.toPlainText()
-
         # set parent? of item
         item = QtWidgets.QListWidgetItem(self.QListWidgetCVList)
 
         # create a new custom widget
         customWidget = MyCustomWidget(self.fileNameLastImageUsed,
-                                      self._pixmap,
+                                      self.tmpPixmap,
                                       self.CVUserName.toPlainText(),
+                                      self.CVDescription.toPlainText(),
                                       item,
                                       self.QListWidgetCVList)
 
@@ -94,8 +90,9 @@ class Ui(QtWidgets.QMainWindow):
         # change item to custom widget
         self.QListWidgetCVList.setItemWidget(item, customWidget)
 
-        print('CVlist count: ', self.QListWidgetCVList.count())
+        # print('CVlist count: ', self.QListWidgetCVList.count())
 
+        # clear user input
         self.CVDescription.clear()
         self.CVUserName.clear()
         self.CVImage.clear()
@@ -104,9 +101,6 @@ class Ui(QtWidgets.QMainWindow):
         # color from 0,255,0 (pure green) to 255,255,255 (pure white)
         print('added:', user, ' with profile description: ', user_description)
         # flash the button
-
-    def FlashButtonAsRed(self):
-        pass
 
     def SelectImageCV(self):
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(
@@ -118,10 +112,11 @@ class Ui(QtWidgets.QMainWindow):
 
             pixmap = QtGui.QPixmap(fileName)
 
-            pixmap = pixmap.scaled(self.CVImage.width(
-            ), self.CVImage.height(), QtCore.Qt.IgnoreAspectRatio)
-            self._pixmap = pixmap
-            print('pixmap is: ', self._pixmap)
+            pixmap = pixmap.scaled(self.CVImage.width(),
+                                   self.CVImage.height(),
+                                   QtCore.Qt.IgnoreAspectRatio)
+            self.tmpPixmap = pixmap
+            print('pixmap is: ', self.tmpPixmap)
             self.CVImage.setPixmap(pixmap)
 
             self.CVImage.setAlignment(QtCore.Qt.AlignCenter)
@@ -133,7 +128,7 @@ def RunGraphics():
 
 
 if __name__ == "__main__":
-    # app = QtWidgets.QApplication(sys.argv)
-    tmp_app = RunGraphics()
+    # app =
+    tmp_app = QtWidgets.QApplication(sys.argv)
     window = Ui()
     tmp_app.exec_()
