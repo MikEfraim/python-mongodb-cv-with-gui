@@ -15,7 +15,7 @@ in a mongo database
 
 
 # What does this application do so far:
-1. Uses gui to insert/delete user's CV with name,description and image ( /gui/cotroller.ui.py)
+1. Uses gui to insert/delete user's CV with name,description and image ( /gui/cotroller_ui.py)
 2. Connects to a localhost mongo database (not implemented yet) ( /Mongo/main_mongo.py)
 
 # Todo list:
