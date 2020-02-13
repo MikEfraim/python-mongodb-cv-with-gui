@@ -15,12 +15,15 @@ in a mongo database
 
 
 # What does this application do so far:
-1. Uses gui to insert/delete user's CV with name,description and image ( /gui/cotroller_ui.py)
-2. Connects to a localhost mongo database (not implemented yet) ( /Mongo/main_mongo.py)
+1. Uses gui to insert/delete user's CV with name,description and image ( cotroller.ui.py)
+2. Saves images on image_of_profiles folder
+2. Connects to a localhost mongo database (not implemented yet) ( client.py)
 
 # Todo list:
+* Add multithreading for client/gui synchronization
+* get specific info from find(userName) 
 * make images have an ID, save the image on a folder.
 * When an insert action is successful, make a white qlabel go instantly green and then progressively white again
 with text indicating a successful insertion
 * Finally, connect the profiles to the database with working inserts/deletes
-* On open app, load profiles
+* Upon opening the app, load user profiles

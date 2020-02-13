@@ -1,19 +1,31 @@
 from PyQt5 import QtWidgets, QtGui, QtCore, Qt, uic
 from pathlib import Path
-
 from customwidget import MyCustomWidget
+
 
 import os
 import sys
 import time
 import copy
+import secrets
 
+import sys
+# sys.path.append(".") # Adds higher directory to python modules path.
+from Mongo import client
 
-print("PyQt version:", Qt.PYQT_VERSION_STR)
 # cwd = os.getcwd()
 # print('working directory:', cwd)
+
+# import sys
+# for p in sys.path:
+#     print(p)
+print('\n')
+print("PyQt version:", Qt.PYQT_VERSION_STR)
+
 guiFolder = Path(__file__).resolve().parent
-# print('guiFolder is:', guiFolder)
+print('\nguiFolder type=', type(guiFolder), '\n guiFolder=', guiFolder)
+imageFolder = Path(guiFolder.__str__()+'/images_of_profiles/')
+print('\nimageFolder type=', type(imageFolder), '\n imageFolder=', imageFolder)
 uiFilePath = guiFolder.__str__() + \
     '/raw_gui_latest.ui'
 print('uiFilePath= ', uiFilePath)
@@ -90,8 +102,12 @@ class Ui(QtWidgets.QMainWindow):
         # change item to custom widget
         self.QListWidgetCVList.setItemWidget(item, customWidget)
 
-        # print('CVlist count: ', self.QListWidgetCVList.count())
-
+        # save the image on the file
+        imageName = str(imageFolder.__str__()+'/image' +
+                        str(self.GetRandomID(5))+'.png')
+        print('image name=', imageName)
+        tmp = self.tmpPixmap.save(imageName, "PNG")
+        print('tmp is:', tmp)
         # clear user input
         self.CVDescription.clear()
         self.CVUserName.clear()
@@ -121,14 +137,18 @@ class Ui(QtWidgets.QMainWindow):
 
             self.CVImage.setAlignment(QtCore.Qt.AlignCenter)
 
+    def GetRandomID(self, byteSize):
+        '''
+        generate a secret id and return it
+        '''
+        return secrets.token_hex(byteSize)
 
-def RunGraphics():
+
+def RunGUI():
     app = QtWidgets.QApplication(sys.argv)
-    return app
-
+    window = Ui()
+    app.exec_()
 
 if __name__ == "__main__":
-    # app =
-    tmp_app = QtWidgets.QApplication(sys.argv)
-    window = Ui()
-    tmp_app.exec_()
+    RunGUI()
+    # client=client.Client() #requires multi threading, will check later

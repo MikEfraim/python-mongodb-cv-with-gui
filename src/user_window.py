@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtGui, QtCore, Qt, uic
 import sys
-
+import secrets
 from pathlib import Path
 
 
@@ -44,12 +44,9 @@ class MiniUserWindow(QtWidgets.QMainWindow):
 
         self.show()
 
-    def PrintHello(self):
-        print('hello')
-
-
 if __name__ == "__main__":
     # app =
     tmp_app = QtWidgets.QApplication(sys.argv)
     window = MiniUserWindow()
     tmp_app.exec_()
+    
