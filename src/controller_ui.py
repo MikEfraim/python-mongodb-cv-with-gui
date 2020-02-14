@@ -2,7 +2,6 @@ from PyQt5 import QtWidgets, QtGui, QtCore, Qt, uic
 from pathlib import Path
 from customwidget import MyCustomWidget
 
-
 import os
 import sys
 import time
@@ -30,6 +29,8 @@ uiFilePath = guiFolder.__str__() + \
     '/raw_gui_latest.ui'
 print('uiFilePath= ', uiFilePath)
 
+# myClient=client.Client()
+
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
@@ -38,12 +39,10 @@ class Ui(QtWidgets.QMainWindow):
         # print('\npath of parent folder:\n ',Path(__file__).resolve().parent)
 
         uic.loadUi(uiFilePath, self)
-        # initialize some variables so the autocomplete recognizes them
-
+        # buttons
         self.ButtonAddUser: QtWidgets.QPushButton
         self.ButtonAddUser = self.findChild(
-            QtWidgets.QPushButton, 'PushButton_AddUser')  # Find the Tbutton
-        # Remember to pass the definition/method, not the return value!
+            QtWidgets.QPushButton, 'PushButton_AddUser')
         self.ButtonAddUser.clicked.connect(self.AddUser)
 
         self.ButtonAddImageCV: QtWidgets.QPushButton
@@ -51,27 +50,44 @@ class Ui(QtWidgets.QMainWindow):
             QtWidgets.QPushButton, 'PushButton_AddImage')
         self.ButtonAddImageCV.clicked.connect(self.SelectImageCV)
 
+        self.ButtonDeleteAllUsers: QtWidgets.QPushButton
+        self.ButtonDeleteAllUsers = self.findChild(
+            QtWidgets.QPushButton, 'PushButton_DeleteAllUsers')
+        self.ButtonDeleteAllUsers.clicked.connect(self.DeleteAllUsers)
+
+        # QTextEdits
         self.CVDescription: QtWidgets.QTextEdit
         self.CVDescription = self.findChild(
             QtWidgets.QTextEdit, 'CVUserDescription')
 
         self.CVUserName: QtWidgets.QTextEdit
         self.CVUserName = self.findChild(QtWidgets.QTextEdit, 'CVUserName')
-
+        # QLabels
         self.CVImage: QtWidgets.QLabel
         self.CVImage = self.findChild(QtWidgets.QLabel, 'CVImage')
-
+        # QListWidgets
         self.QListWidgetCVList: QtWidgets.QListWidget
         self.QListWidgetCVList = self.findChild(
             QtWidgets.QListWidget, 'QListWidgetCVList')
 
         self.show()
-        # print('type is:',type(self.CVImage))
-        self.counter = 0
+
+        self.InitializeClient()
+
+    def InitializeClient(self):
+        self.myClient = client.Client()
+
+    def LoadUsersFromDatabase(self):
+        pass
+    def LoadUsers(self):
+        '''
+        not implemented yet
+        '''
+        pass
 
     def AddUser(self):
         # check if all inputs are given
-        print('type is: ', type(self.CVImage.pixmap()))
+        # print('type is: ', type(self.CVImage.pixmap()))
         if (not self.CVImage.pixmap()):
             print('no image set')
             return 0
@@ -81,12 +97,15 @@ class Ui(QtWidgets.QMainWindow):
         if (not self.CVDescription.toPlainText()):
             print('no description set')
             return 0
-
+        
+        self.myClient.InsertUser(
+            self.CVUserName.toPlainText(), self.CVDescription.toPlainText())
         # set parent? of item
         item = QtWidgets.QListWidgetItem(self.QListWidgetCVList)
 
         # create a new custom widget
-        customWidget = MyCustomWidget(self.fileNameLastImageUsed,
+        customWidget = MyCustomWidget(self,
+                                      self.fileNameLastImageUsed,
                                       self.tmpPixmap,
                                       self.CVUserName.toPlainText(),
                                       self.CVDescription.toPlainText(),
@@ -103,20 +122,41 @@ class Ui(QtWidgets.QMainWindow):
         self.QListWidgetCVList.setItemWidget(item, customWidget)
 
         # save the image on the file
-        imageName = str(imageFolder.__str__()+'/image' +
+        imageName = str(imageFolder.__str__()+'/' +
                         str(self.GetRandomID(5))+'.png')
-        print('image name=', imageName)
+        # print('image name=', imageName)
         tmp = self.tmpPixmap.save(imageName, "PNG")
-        print('tmp is:', tmp)
         # clear user input
         self.CVDescription.clear()
         self.CVUserName.clear()
         self.CVImage.clear()
 
+    def DeleteAllUsers(self):
+        self.myClient.DeleteAllUsers()
+        self.QListWidgetCVList.clear()
+        self.ClearFolderFromImages()
+        print('Deleted all users successfully')
+
+    def ClearFolderFromImages(self):
+        #clears all images from image folder
+        dir_name = imageFolder
+        folders = os.listdir(dir_name)
+        for item in folders:
+            if item.endswith(".png"):
+                os.remove(os.path.join(dir_name, item))
+                
+    def DeleteUser(self,name:str,description:str):
+        print(__name__,' passing user= <',name,'> description= <',description,'>')
+        imageID=self.myClient.FinderImageID(name,description)
+        self.myClient.DeleteUser(name,description)
+        print('\nimageID=',imageID,'\n')
+        # test = imageFolder.__str__()+'/'+imageID+'.png'
+        # print('image=',test)
+        # os.remove(imageFolder)
     def FlashButtonAsGreen(self, name, user_description):
         # color from 0,255,0 (pure green) to 255,255,255 (pure white)
-        print('added:', user, ' with profile description: ', user_description)
         # flash the button
+        pass
 
     def SelectImageCV(self):
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(
@@ -132,7 +172,7 @@ class Ui(QtWidgets.QMainWindow):
                                    self.CVImage.height(),
                                    QtCore.Qt.IgnoreAspectRatio)
             self.tmpPixmap = pixmap
-            print('pixmap is: ', self.tmpPixmap)
+            # print('pixmap is: ', self.tmpPixmap)
             self.CVImage.setPixmap(pixmap)
 
             self.CVImage.setAlignment(QtCore.Qt.AlignCenter)
@@ -148,6 +188,7 @@ def RunGUI():
     app = QtWidgets.QApplication(sys.argv)
     window = Ui()
     app.exec_()
+
 
 if __name__ == "__main__":
     RunGUI()

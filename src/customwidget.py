@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets, QtGui, QtCore, Qt, uic
 from pathlib import Path
 from user_window import MiniUserWindow
-
+# from controller_ui import Ui
 
 import os
 import sys
@@ -11,6 +11,7 @@ import copy
 
 class MyCustomWidget(QtWidgets.QWidget):
     def __init__(self,
+                 Ui,
                  fileNameLastImageUsed: str,
                  userPixmap: QtGui.QPixmap,
                  userName: str,
@@ -19,6 +20,11 @@ class MyCustomWidget(QtWidgets.QWidget):
                  parentList: QtWidgets.QListWidget,
                  parent=None):
         super(MyCustomWidget, self).__init__(parent)
+
+        self.mainUi=Ui
+
+        self.userName=userName
+        self.userDescription=userDescription
 
         self.itemReference = itemReference
 
@@ -49,8 +55,8 @@ class MyCustomWidget(QtWidgets.QWidget):
                  userName: str,
                  userPixmap: QtGui.QPixmap,
                  userDescription: str,):
-        print('user is:', userName, ' pixmap is:', userPixmap,
-              ' descritpion is: ', userDescription)
+        # print('user is:', userName, ' pixmap is:', userPixmap,
+        #       ' descritpion is: ', userDescription)
         test = MiniUserWindow(userName,
                               userDescription,
                               userPixmap)
@@ -59,4 +65,6 @@ class MyCustomWidget(QtWidgets.QWidget):
     def DeleteUser(self):
         itemRow = self.parentList.row(self.itemReference)
         self.parentList.takeItem(itemRow)
-        print('new CVlist count:', self.parentList.count())
+        # print('new CVlist count:', self.parentList.count())
+        print(__name__,' passing user= <',self.userName,'> description= <',self.userDescription,'>')
+        self.mainUi.DeleteUser(self.userName,self.userDescription)
