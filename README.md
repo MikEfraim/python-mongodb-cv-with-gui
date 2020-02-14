@@ -13,17 +13,15 @@ in a mongo database
 * (Optional)MongoDB Compass - To view database
 * (might add more later)
 
+# How to run the program
+1. Start localhost mongod ($sudo mongod)
+2. Run controller_ui.py
 
 # What does this application do so far:
-1. Uses gui to insert/delete user's CV with name,description and image ( cotroller.ui.py)
-2. Saves images on image_of_profiles folder
-2. Connects to a localhost mongo database (not implemented yet) ( client.py)
+1. Uses gui to insert/delete user's CV with name,description and image
+2. User images are saved and updated outside the database (/image_of_profiles) for further processing 
 
-# Todo list:
-* Add multithreading for client/gui synchronization
-* get specific info from find(userName) 
-* make images have an ID, save the image on a folder.
-* When an insert action is successful, make a white qlabel go instantly green and then progressively white again
+# Todo list: 
+* Upon opening the app, load all user profiles in the widget list
+* Add a debug  make a white qlabel go instantly green and then progressively white again
 with text indicating a successful insertion
-* Finally, connect the profiles to the database with working inserts/deletes
-* Upon opening the app, load user profiles
