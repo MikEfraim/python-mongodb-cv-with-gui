@@ -12,7 +12,7 @@ import copy
 class MyCustomWidget(QtWidgets.QWidget):
     def __init__(self,
                  Ui,
-                 fileNameLastImageUsed: str,
+                #  fileNameLastImageUsed: str,
                  userPixmap: QtGui.QPixmap,
                  userName: str,
                  userDescription: str,
@@ -63,6 +63,7 @@ class MyCustomWidget(QtWidgets.QWidget):
         self.dialogs.append(test)
 
     def DeleteUser(self):
+        #get item reference
         itemRow = self.parentList.row(self.itemReference)
         self.parentList.takeItem(itemRow)
         # print('new CVlist count:', self.parentList.count())

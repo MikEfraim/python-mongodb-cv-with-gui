@@ -76,18 +76,46 @@ class Ui(QtWidgets.QMainWindow):
 
     def InitializeClient(self):
         self.myClient = client.Client()
+        self.LoadUsersFromDatabase()
 
     def LoadUsersFromDatabase(self):
-        pass
-    def LoadUsers(self):
-        '''
-        not implemented yet
-        '''
-        pass
+        tmpList = self.myClient.GetAllUsers()
+        print('counted numbers in list=', len(tmpList))
+        for i in range(len(tmpList)):
+            print('name=<', tmpList[i]['name'], '> description=<', tmpList[i]
+                  ['description'], '>image_id=<', tmpList[i]['image_id'], '>')
+            self.LoadUserToWidgetList(
+                tmpList[i]['name'], tmpList[i]['description'], tmpList[i]['image_id'])
+
+    def LoadUserToWidgetList(self, userName: str,
+                             description: str,
+                             imageID: str):
+        # set parent? of item
+        item = QtWidgets.QListWidgetItem(self.QListWidgetCVList)
+        # search image based on imagID
+        imageFile = imageFolder.__str__()+'/'+imageID+'.png'
+        pixmap = QtGui.QPixmap(imageFile)
+
+        print('imageFile=<', imageFile, '>')
+        # create a new custom widget
+        customWidget = MyCustomWidget(self,
+                                      pixmap,
+                                      userName,
+                                      description,
+                                      item,
+                                      self.QListWidgetCVList)
+
+        # set the item to the sizehint of the custom widget
+        item.setSizeHint(customWidget.sizeHint())
+
+        # add item to the list
+        self.QListWidgetCVList.addItem(item)
+
+        # change item to custom widget
+        self.QListWidgetCVList.setItemWidget(item, customWidget)
 
     def AddUser(self):
         # check if all inputs are given
-        # print('type is: ', type(self.CVImage.pixmap()))
         if (not self.CVImage.pixmap()):
             print('no image set')
             return 0
@@ -97,15 +125,16 @@ class Ui(QtWidgets.QMainWindow):
         if (not self.CVDescription.toPlainText()):
             print('no description set')
             return 0
-        
-        self.myClient.InsertUser(
-            self.CVUserName.toPlainText(), self.CVDescription.toPlainText())
+        imageID = self.GetRandomID(5)
+        self.myClient.InsertUser(self.CVUserName.toPlainText(),
+                                 self.CVDescription.toPlainText(),
+                                 imageID)
         # set parent? of item
         item = QtWidgets.QListWidgetItem(self.QListWidgetCVList)
 
         # create a new custom widget
         customWidget = MyCustomWidget(self,
-                                      self.fileNameLastImageUsed,
+                                      #   self.fileNameLastImageUsed,
                                       self.tmpPixmap,
                                       self.CVUserName.toPlainText(),
                                       self.CVDescription.toPlainText(),
@@ -123,7 +152,7 @@ class Ui(QtWidgets.QMainWindow):
 
         # save the image on the file
         imageName = str(imageFolder.__str__()+'/' +
-                        str(self.GetRandomID(5))+'.png')
+                        str(imageID)+'.png')
         # print('image name=', imageName)
         tmp = self.tmpPixmap.save(imageName, "PNG")
         # clear user input
@@ -132,31 +161,40 @@ class Ui(QtWidgets.QMainWindow):
         self.CVImage.clear()
 
     def DeleteAllUsers(self):
+        '''
+        removes all users from the database and their respective images
+        '''
         self.myClient.DeleteAllUsers()
         self.QListWidgetCVList.clear()
         self.ClearFolderFromImages()
         print('Deleted all users successfully')
 
     def ClearFolderFromImages(self):
-        #clears all images from image folder
+        '''
+        clears all images from image folder
+        '''
         dir_name = imageFolder
         folders = os.listdir(dir_name)
         for item in folders:
             if item.endswith(".png"):
                 os.remove(os.path.join(dir_name, item))
-                
-    def DeleteUser(self,name:str,description:str):
-        print(__name__,' passing user= <',name,'> description= <',description,'>')
-        imageID=self.myClient.FinderImageID(name,description)
-        self.myClient.DeleteUser(name,description)
-        print('\nimageID=',imageID,'\n')
-        # test = imageFolder.__str__()+'/'+imageID+'.png'
-        # print('image=',test)
-        # os.remove(imageFolder)
+
+    def DeleteUser(self, name: str, description: str):
+        print(__name__, ' passing user= <', name,
+              '> description= <', description, '>')
+        imageID = self.myClient.FinderImageID(name, description)
+        self.myClient.DeleteUser(name, description)
+        print('\nimageID=', imageID, '\n')
+        imageFileName=imageFolder.__str__()+'/'+imageID+'.png'
+        os.remove(imageFileName)
+
     def FlashButtonAsGreen(self, name, user_description):
         # color from 0,255,0 (pure green) to 255,255,255 (pure white)
         # flash the button
         pass
+
+    def DeleteImage(self, imagePath):
+        os.remove(imagePath)
 
     def SelectImageCV(self):
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(
@@ -165,7 +203,7 @@ class Ui(QtWidgets.QMainWindow):
         self.fileNameLastImageUsed = fileName
         print(self.fileNameLastImageUsed)
         if fileName:
-
+            # load image in pixmap
             pixmap = QtGui.QPixmap(fileName)
 
             pixmap = pixmap.scaled(self.CVImage.width(),

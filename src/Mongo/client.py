@@ -25,10 +25,11 @@ class Client():
 
     def InsertUser(self,
                    userName: str,
-                   userDescription: str):
+                   userDescription: str,
+                   imageID:str):
         aUser = {"name": userName,
                  "description": userDescription,
-                 "image_id": self.GetRandomID()}
+                 "image_id": imageID}
         # insert user into the database in the users collection
         result = self.myCollection.insert_one(aUser)
 
@@ -48,17 +49,15 @@ class Client():
         ):
             myList.append(i)
             print('added to the list: ', i)
-        # for i in self.myCollection.find(
-        #     {'name': userName, 'description': description}, {
-        #         '_id': 0, 'description': 1, 'image_id': 1}
-        # ):
-            # myList.append(i)
         print('counted numbers in list=', len(myList))
         length = len(myList)
         for i in range(length):
             print(myList[i]['description'], '\n', myList[i]['image_id'])
 
     def FinderImageID(self, userName: str, description: str):
+        '''
+        returns an image id of the user
+        '''
         print(__name__,' passing user= <',userName,'> description= <',description,'>\n')
         myList = list()
         for i in self.myCollection.find(
@@ -77,15 +76,18 @@ class Client():
         value=myList[0]['image_id']
         return value
 
-    def FindAllUsers(self):
+    def GetAllUsers(self):
+        '''
+        returns a list of all users of the database
+        '''
         print('found the following users')
         myList = list()
-        for i in self.myCollection.find({}, {'_id': 0, 'description': 1, 'image_id': 1}):
+        for i in self.myCollection.find({}, {'_id': 0,'name':1, 'description': 1, 'image_id': 1}):
             myList.append(i)
-        print('counted numbers in list=', len(myList))
-        for i in range(len(myList)):
-            print(myList[i])
-
+        # print('counted numbers in list=', len(myList))
+        # for i in range(len(myList)):
+        #     print(myList[i]['name'],myList[i]['description'],myList[i]['image_id'])
+        return myList
     def DeleteAllUsers(self):
         self.myCollection.delete_many({})
 
@@ -110,13 +112,10 @@ if __name__ == "__main__":
     client.InsertUser('Jason', 'this is my description3')
 
     # client.FindAllUsers()
-    client.FindUser('asd', 'asdasd')
-    tmp=client.FinderImageID('asd','asdasd')
-    # client.FindAllUsers()
-    client.DeleteAllUsers()
-    time.sleep(0.5)
-    # cursor = db.inventory.find(
-    # {"status": "A"}, {"item": 1, "status": 1, "_id": 0})
-    # for i in self.db.users.find({'name': userName},{'name':1,'_id':0,'description':1}):
-    #     print(i)
-    # print('testing:\n')
+    # client.FindUser('asd', 'asdasd')
+    # tmp=client.FinderImageID('asd','asdasd')
+    tmpList=client.GetAllUsers()
+    print('counted numbers in list=', len(tmpList))
+    for i in range(len(tmpList)):
+        print(tmpList[i]['name'],tmpList[i]['description'],tmpList[i]['image_id'])
+    # client.DeleteAllUsers()
